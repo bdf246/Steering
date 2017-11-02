@@ -56,14 +56,12 @@ void loop() {
         if (value != '\n') {
             Serial.println(steerTarget);
 
-            digitalWrite(dir, steerDirection);
-            analogWrite(pwm, pwm_value);
-            delay(50);
-            analogWrite(pwm, 0);
+            // digitalWrite(dir, steerDirection);
+            // analogWrite(pwm, pwm_value);
+            // delay(50);
+            // analogWrite(pwm, 0);
         }
     }
-
-    return;
 
     // ----------------------------------------------------------------------
     // Make target and actual line up:
@@ -78,10 +76,10 @@ void loop() {
 
         int diff = steerTarget - steerFeedback;
         if (diff > STEER_TOL) {
-            steerDirection = 0;
-        }
-        else if (diff < STEER_TOL) {
             steerDirection = 1;
+        }
+        else if (diff < -STEER_TOL) {
+            steerDirection = 0;
         }
         else {
             notDone=false;
