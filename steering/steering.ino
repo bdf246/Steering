@@ -19,12 +19,14 @@ void setup() {
    Serial.begin(9600);
 }
 
-int pwm_value = 255;
+int steerDirection = 0;
+int pwm_value = 128;
 
 const int STEER_MIN = 380;
 const int STEER_CTR = 512;
 const int STEER_MAX = 700;
 const int STEER_INC = 20;
+const int STEER_TOL = 10;
 
 int steerTarget=STEER_CTR;
 
@@ -39,10 +41,12 @@ void loop() {
 
         if (value == 'l') { // More Left
             steerTarget -= STEER_INC;
+            steerDirection = 0;
             if (steerTarget < STEER_MIN) steerTarget = STEER_MIN;
         }
         else if (value == ';') { // More right
             steerTarget += STEER_INC;
+            steerDirection = 1;
             if (steerTarget > STEER_MAX) steerTarget = STEER_MAX;
         }
         else if (value == 'p') { // Centre
@@ -51,23 +55,43 @@ void loop() {
 
         if (value != '\n') {
             Serial.println(steerTarget);
+
+            digitalWrite(dir, steerDirection);
+            analogWrite(pwm, pwm_value);
+            delay(50);
+            analogWrite(pwm, 0);
         }
     }
 
-            // digitalWrite(pwm, pwm_value);                               //increase PWM in every 0.1 sec
-            // delay(100);
-            // digitalWrite(pwm, 0);                               //increase PWM in every 0.1 sec
+    return;
+
     // ----------------------------------------------------------------------
     // Make target and actual line up:
     // ----------------------------------------------------------------------
-    // int steerFeedback = analogRead(STEERING_FEEDBACK_PIN);
-    // Serial.println(steerFeedback);
-    // delay(500);
+    bool notDone=true;
+    while (notDone) {
+        int steerFeedback = analogRead(STEERING_FEEDBACK_PIN);
+        // 0 - 1023. Active range observed is: 390 to 656
+        // 2 to 3 ohms. is 4 to 6 / 10
+        // Center is 512 but may be a little higher.
+        Serial.println(steerFeedback);
 
-    // 0 - 1023. Active range observed is: 390 to 656
-    // 2 to 3 ohms. is 4 to 6 / 10
-    // Center is 512 but may be a little higher.
+        int diff = steerTarget - steerFeedback;
+        if (diff > STEER_TOL) {
+            steerDirection = 0;
+        }
+        else if (diff < STEER_TOL) {
+            steerDirection = 1;
+        }
+        else {
+            notDone=false;
+        }
 
+        digitalWrite(dir, steerDirection);
+        analogWrite(pwm, pwm_value);
+        delay(50);
+        analogWrite(pwm, 0);
+    }
 }
 
 
