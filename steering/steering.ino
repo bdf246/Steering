@@ -39,9 +39,11 @@ void loop() {
 
         if (value == 'l') { // More Left
             steerTarget -= STEER_INC;
+            if (steerTarget < STEER_MIN) steerTarget = STEER_MIN;
         }
         else if (value == ';') { // More right
             steerTarget += STEER_INC;
+            if (steerTarget > STEER_MAX) steerTarget = STEER_MAX;
         }
         else if (value == 'p') { // Centre
             steerTarget=STEER_CTR;
