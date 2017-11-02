@@ -20,13 +20,13 @@ void setup() {
 }
 
 int steerDirection = 0;
-int pwm_value = 128;
+int pwm_value = 64;
 
 const int STEER_MIN = 380;
 const int STEER_CTR = 512;
 const int STEER_MAX = 700;
 const int STEER_INC = 20;
-const int STEER_TOL = 10;
+const int STEER_TOL = 50;
 
 int steerTarget=STEER_CTR;
 
@@ -85,10 +85,13 @@ void loop() {
             notDone=false;
         }
 
-        digitalWrite(dir, steerDirection);
-        analogWrite(pwm, pwm_value);
-        delay(50);
-        analogWrite(pwm, 0);
+        if (notDone) {
+            digitalWrite(dir, steerDirection);
+            analogWrite(pwm, pwm_value);
+            delay(50);
+            analogWrite(pwm, 0);
+        }
+        delay(200);
     }
 }
 
