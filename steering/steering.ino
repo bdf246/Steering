@@ -26,7 +26,7 @@ const int STEER_MIN = 380;
 const int STEER_CTR = 512;
 const int STEER_MAX = 700;
 const int STEER_INC = 20;
-const int STEER_TOL = 50;
+const int STEER_TOL = 15;
 
 int steerTarget=STEER_CTR;
 
@@ -91,7 +91,7 @@ void loop() {
             delay(50);
             analogWrite(pwm, 0);
         }
-        delay(200);
+        delay(20);
     }
 }
 
